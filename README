@@ -1,0 +1,7 @@
+Plugin jQuery que permite la validación automática de los campos de texto en un formulario
+
+USO
+$('#login').autoval();
+
+OPCIONES
+(Aún en construcción)
