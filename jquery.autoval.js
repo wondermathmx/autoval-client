@@ -3,6 +3,7 @@
 	Plugin jQuery que permite la validación automática de los parámetros especificados en el formulario.
 	
 	(C) 2012, WonderMath / Guillermo Villafuerte
+   	Revisado por Raúl Díaz (Y)
 */
 
 /*
@@ -42,7 +43,7 @@
 	var methods = {
 		init: function( options ) {
 			options = $.extend(defaults, options);
-			console.log('Método init llamado con los parámetros:');
+			//console.log('Método init llamado con los parámetros:'); /* Cambiado */
 			console.log(options);
 
 			options.defaultTextColor = $(sel, this).css('color');
