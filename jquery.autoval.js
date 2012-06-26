@@ -43,7 +43,7 @@
 	var methods = {
 		init: function( options ) {
 			options = $.extend(defaults, options);
-			//console.log('Método init llamado con los parámetros:'); /* Cambiado */
+			console.log('Método init llamado con los parámetros:');
 			console.log(options);
 
 			options.defaultTextColor = $(sel, this).css('color');
@@ -102,7 +102,7 @@
 			$(this).find('li').each(function() {
 				$(sel + ', :password', this).on('blur', function() {
 					console.log('AUTOVAL: Valor de campo -> "' + $(this).val() + '"');
-					if ( $(this).val() != '' || ( !$.support.placeholder && $(this).val() != $(this).attr('placeholder')) ) {
+					if ( $(this).val() != '' || (!$.support.placeholder && $(this).val() != $(this).attr('placeholder')) ) {
 						console.log('AUTOVAL: Proceso de validación iniciado.');
 						var result = methods.validate.apply(this, [this, options]);
 
@@ -143,27 +143,22 @@
 			if ( $(field).attr('data-validation') != undefined ) {
 				var regex = new RegExp($(field).attr('data-validation'));
 				console.log('AUTOVAL: Validando campo de acuerdo a la expresión regular "data-validation": /' + regex.source + '/');
-				if ( regex.test($(field).val()) )
-					isValid = true;
-				else
+				if ( !regex.test($(field).val()) )
 					return 0;
 			}
 
 			if ( $(field).attr('data-annulation') != undefined ) {
 				console.log('AUTOVAL: Validando campo de acuerdo a la expresión regular "data-annulation"');
 				var regex = new RegExp($(field).attr('data-annulation'));
-				if ( !regex.test($(field).val()) )
-					isValid = (!isValid) ? false : true;
-				else
+				if ( regex.test($(field).val()) )
 					return 0;
 			}
 			
 			if ( $(field).attr('data-validationfield') != undefined ) {
 				console.log('AUTOVAL: Validando que el campo concuerde con el asignado en "data-validationfield"');
 				var eq = $(field).parent().parent().find('li #'+$(field).attr('data-validationfield')).val();
-				if ( eq == $(field).val() )
-					isValid = (!isValid) ? false : true;
-				else
+				console.log('AUTOVAL: Comparación de valor origen "' + $(field).val() + '" con valor destino "' + eq + '"');
+				if ( eq != $(field).val() )
 					return 0;
 			}
 			
@@ -183,7 +178,6 @@
 				.done(function(data) {
 					if (data == options.successfulResponse) {
 						console.log('AUTOVAL: Respuesta satisfactoria del servidor.');
-						isValid = (!isValid) ? false : true;
 						$(field).parent().find('.feedback').attr('data-icon', 'ok');
 						if ( options.enablingOnSequence ) {
 							console.log('AUTOVAL: Activando siguiente campo.');
@@ -192,7 +186,6 @@
 						}
 					}
 					else {
-						isValid = false;
 						console.log('AUTOVAL: Respuesta satisfactoria NO recibida del servidor.');
 						$(field).parent().find('.feedback').attr('data-icon', 'warn');
 					}
@@ -205,25 +198,8 @@
 				});
 				return 2;
 			}
-			else if ( isValid )
+			else
 				return 1;
-
-
-			if ( isValid ) {
-				$(field).parent().find('.feedback').attr('data-icon', 'ok');
-				if ( options.enablingOnSequence && options.skipAJAXVal ) {
-					console.log('AUTOVAL: Activando siguiente campo.');
-					$(field).parent().next().find(sel + ', :password').removeAttr('disabled');
-				}
-				return 1;
-			}
-			else {
-				if ( options.skipAJAXVal ) {
-					console.log('AUTOVAL: Error de validación en el campo ' + $(this).index() + ' del formulario.');
-					$(field).parent().find('.feedback').attr('data-icon', 'warn');
-				}
-				return 0;
-			}
 		}
 
 	};
