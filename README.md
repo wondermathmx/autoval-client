@@ -6,7 +6,8 @@ Este plugin será utilizado conforme se va desarrollando en el sitio [WonderMath
 El plugin debe ser llamado mediante el contexto de un selector a un formulario.
 Para utilizar las opciones predeterminadas, se debe ejecutar lo siguiente, teniendo un formulario con id "login":
 
+```
 $('#login').autoval();
-
+```
 ## Opciones predeterminadas
 (Aún en construcción)
