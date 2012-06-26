@@ -9,5 +9,14 @@ Para utilizar las opciones predeterminadas, se debe ejecutar lo siguiente, tenie
 ```
 $('#login').autoval();
 ```
+
+En caso de que se requiera modificar alguna de las opciones predeterminadas, estas se deberán pasar como un argumento a la función `autoval()`, de la siguiente manera:
+
+```
+$('#login').autoval({
+	
+});
+```
+
 ## Opciones predeterminadas
 (Aún en construcción)
