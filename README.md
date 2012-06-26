@@ -14,9 +14,24 @@ En caso de que se requiera modificar alguna de las opciones predeterminadas, est
 
 ```
 $('#login').autoval({
-	
+	// aquí van las opciones configuradas a tu gusto
 });
 ```
 
+
+##Configuraciones predefinidas
+Las configuraciones predefinidas del plugin son las siguientes:
+```
+var defaults = {
+	urlMethod: 'GET',
+	remarkPlaceholder: true,
+	enablingOnSequence: false,
+	disableSubmitBtn: false,
+	successfulResponse: true,
+	skipAJAXVal: false,
+	pseudoHolderColor: '#888',
+	defaultTextColor: '#000'
+};
+```
 ## Opciones predeterminadas
-(Aún en construcción)
+El programa permite la configuración de varios atributos
