@@ -1,0 +1,11 @@
+.feedback {
+	width: 24px;
+	height: 24px;
+	line-height: 25px;
+	float: right;
+	background: #000;
+}
+.feedback[data-icon=info] { background: url(/assets/img/btn-info.png) no-repeat top left; }
+.feedback[data-icon=wait] { background: url(/assets/img/btn-wait.gif) no-repeat top left; }
+.feedback[data-icon=ok] { background: url(/assets/img/btn-ok.png) no-repeat top left; }
+.feedback[data-icon=warn] { background: url(/assets/img/btn-warn.png) no-repeat top left; }
