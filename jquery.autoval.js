@@ -5,7 +5,6 @@
 	
 	(C) 2012, WonderMath:
 		Guillermo Villafuerte
-		Raúl Díaz
 */
 
 (function( $ ) {
@@ -29,11 +28,19 @@
 	// Lista de métodos del plugin
 	var methods = {
 		init: function( options ) {
+
+			// Crear y llenar una variable que nos indique si hay soporte 
+			$.support.placeholder = false;
+			var p = document.createElement('input');
+			if ('placeholder' in p) {
+				$.support.placeholder = true;
+				console.log('AUTOVAL: Soporte de "placeholder" ' + ($.support.placeholder ? 'activado' : 'desactivado') + '.');
+			}
+
 			options = $.extend(defaults, options);
 			console.log('Método init llamado con los parámetros:');
 			console.log(options);
 
-			options.defaultTextColor = $(sel, this).css('color');
 			if ( options.remarkPlaceholder && !$.support.placeholder ) {
 				$(this).find('li').each(function() {
 					// Escribir el texto de la etiqueta "placeholder"
@@ -104,6 +111,10 @@
 							console.log('AUTOVAL: Error de validación en el campo ' + $(this).index() + ' del formulario.');
 							$(this).parent().find('.feedback').attr('data-icon', 'warn');
 						}
+
+						// Habilitar el botón de envío si el formulario tiene todos los campos validados
+						if ( options.disableSubmitBtn && methods.isAllValid.apply(this) )
+							$('button[type=submit]', this).removeAttr('disabled');
 					}
 				});
 			});
@@ -114,6 +125,11 @@
 			if ( options.enablingOnSequence ) {
 				$('li ' + sel + ', li :password', this).attr('disabled', '');
 				$('li ' + sel + ', li :password', this).filter(':first').removeAttr('disabled');
+			}
+
+			// Deshabilitar el botón de envío del formulario de ser necesario
+			if ( options.disableSubmitBtn ) {
+				$('button[type=submit]', this).attr('disabled', '');
 			}
 
 			return this.each(function() {});
@@ -127,6 +143,7 @@
 			console.log('AUTOVAL: Validando campo ' + ($(field).attr('name') != undefined ? $(field).attr('name') : $(field).attr('id')) + ' del formulario.');
 			var isValid;
 			
+			// Comprobar la expresión regular "data-validation" con el valor del campo
 			if ( $(field).attr('data-validation') != undefined ) {
 				var regex = new RegExp($(field).attr('data-validation'));
 				console.log('AUTOVAL: Validando campo de acuerdo a la expresión regular "data-validation": /' + regex.source + '/');
@@ -134,6 +151,7 @@
 					return 0;
 			}
 
+			// Comprobar la expresión regular "data-annulation" con el valor del campo
 			if ( $(field).attr('data-annulation') != undefined ) {
 				console.log('AUTOVAL: Validando campo de acuerdo a la expresión regular "data-annulation"');
 				var regex = new RegExp($(field).attr('data-annulation'));
@@ -141,6 +159,7 @@
 					return 0;
 			}
 			
+			// Comprobar el valor del campo definido en "data-validationfield" con el actual
 			if ( $(field).attr('data-validationfield') != undefined ) {
 				console.log('AUTOVAL: Validando que el campo concuerde con el asignado en "data-validationfield"');
 				var eq = $(field).parent().parent().find('li #'+$(field).attr('data-validationfield')).val();
@@ -149,6 +168,7 @@
 					return 0;
 			}
 			
+			// Verificar si se debe validar a nivel servidor el campo
 			if ( $(field).attr('data-validationurl') != undefined && !options.skipAJAXVal ) {
 				$(field).parent().find('.feedback').attr('data-icon', 'wait');
 				var urlstr = $(field).attr('data-validationurl').substring(0, $(field).attr('data-validationurl').lastIndexOf('?'));
@@ -187,20 +207,22 @@
 			}
 			else
 				return 1;
+		},
+
+		isAllValid: function() {
+			// Verificar que todos los campos hayan sido validados de manera adecuada
+			var isValid; var items = $(sel + ', :password', this);
+			for ( var i; i < items.size(); i++ ) {
+				isValid = (!isValid) ? false : items[i].parent().find('.feedback[data-icon=ok]').size();
+			}
+			console.log('AUTOVAL: ¿Han sido todos los campos validados?' + (isValid ? ' SÍ.' : ' NO'));
+			return isValid;
 		}
 
 	};
 
 
 	$.fn.autoval = function(method) {
-
-		// Crear y llenar una variable que nos indique si hay soporte 
-		$.support.placeholder = false;
-		var p = document.createElement('input');
-		if ('placeholder' in p) {
-			$.support.placeholder = true;
-			console.log('AUTOVAL: Soporte de "placeholder" ' + ($.support.placeholder ? 'activado' : 'desactivado') + '.');
-		}
 
 		if ( methods[method] ) {
 			options = Array.prototype.slice.call( arguments, 1 );
@@ -211,7 +233,6 @@
 			return methods.init.apply( this, arguments );
 		}
 			
-		
 		else
 			$.error( 'El método ' +  method + ' no existe en el plugin.' );
 	}
