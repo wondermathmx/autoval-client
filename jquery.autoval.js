@@ -1,24 +1,11 @@
 /*
 	jquery.autoval.js
+	Versión 0.1.26062012
 	Plugin jQuery que permite la validación automática de los parámetros especificados en el formulario.
 	
-	(C) 2012, WonderMath / Guillermo Villafuerte
-   	Revisado por Raúl Díaz (Y)
-*/
-
-/*
-	<ul>
-		<li>
-			<input [data-validation=regex|null]
-				   [data-annulation=regex|null]
-				   [data-validationurl=relativeurl|null]
-				   [data-validationfield=id|null]
-				   [data-infotext=string|null]
-				   [data-errortext=string|null]>
-			<.feedback [data-icon=info|error|load|ok]>
-		</li>
-		...
-	</ul>
+	(C) 2012, WonderMath:
+		Guillermo Villafuerte
+		Raúl Díaz
 */
 
 (function( $ ) {

@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="es-MX">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<title>AutoVal Testbox</title>
+	<link rel="stylesheet" href="jquery.autoval.css" media="all" />
+	<script src="http://code.jquery.com/jquery-latest.min.js"></script>
+	<!--<script src="http://craigsworks.com/projects/qtip2/"></script>-->
+	<script src="jquery.autoval.js"></script>
+	<script src="index.js"></script>
+</head>
+
+<body>
+<h1>Zona de pruebas de AutoVal</h1>
+<p>Este código es un ejemplo de formulario siendo validado por AutoVal.<br />
+   Prueba a rellenar el campo con los parámetros abajo mencionados y el icono inicial cambiará a una palomita.<br />
+   Intenta ingresar un dato no válido y recibirás un signo de admiración como respuesta.</p>
+<form class="form-layout" id="register">
+	<fieldset>
+		<ul>
+			<li>
+				<input type="text" name="wmath_fullname" id="wmath_fullname" placeholder="Nombre completo" maxlength="50" data-validation="([A-Z][a-záéíóúñ ]{3,}){3,}$" data-validationurl="/usuarios/?pet=checkout&amp;param1=fullname&amp;param2=%VAL%" data-infotext="Introduce tu nombre completo aquí. Sólo será visible si publicas contenido en el sitio." data-errortext="Mínimo un nombre y ambos apellidos, tipo título de mínimo 4 caracteres cada uno." />
+				<div class="feedback"></div>
+				<div class="info">Mínimo un nombre y ambos apellidos, tipo título de mínimo 4 caracteres cada uno.</div>
+			</li>
+			<li>
+				<input type="text" name="wmath_email" id="wmath_email" placeholder="Correo electrónico" maxlength="50" data-validation="^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,4})+$" data-validationurl="/usuarios/?pet=checkout&amp;param1=email&amp;param2=%VAL%" data-infotext="Deberás confirmar el correo electrónico al publicar contenido." data-errortext="Una dirección de correo electrónico válida de máximo 50 caracteres alfanuméricos o guiones." />
+				<div class="feedback"></div>
+				<div class="info">Una dirección de correo electrónico válida de máximo 50 caracteres alfanuméricos o guiones.</div>
+			</li>
+			<li>
+				<input type="text" name="wmath_username" id="wmath_username" placeholder="Nombre de usuario" maxlength="15" data-validation="^[a-z0-9]{5,15}$" data-validationurl="/usuarios/?pet=checkout&amp;param1=username&amp;param2=%VAL%" data-infotext="Con el nombre de usuario se te identificará entre colaboradores. Debe ser único." data-errortext="Entre 5 y 15 caracteres, minúsculas y números. No se admiten guiones ni otros caracteres." />
+				<div class="feedback"></div>
+				<div class="info">Entre 5 y 15 caracteres, minúsculas y números. No se admiten guiones ni otros caracteres.</div>
+			</li>
+			<li>
+				<input type="password" name="wmath_password" id="wmath_password" placeholder="Contraseña" data-validation="(?!^[0-9]*$)(?!^[a-zA-Z]*$)^([a-zA-Z0-9]{6,})$" data-infotext="Tu contraseña protegerá de que terceros accedan a tu cuenta. Debe ser segura y fácil de recordar." data-errortext="Mínimo 6 caracteres." />
+				<div class="feedback"></div>
+				<div class="info">Mínimo 6 caracteres alfanuméricos.</div>
+			</li>
+			<li>
+				<input type="password" name="wmath_passagain" id="wmath_passagain" placeholder="Confirmar contraseña" data-validationfield="wmath_password" data-infotext="Escribe nuevamente tu contraseña para asegurarte de que la recuerdas." data-errortext="No es la misma contraseña que arriba." />
+				<div class="feedback"></div>
+				<div class="info">Debe ser la misma contraseña que arriba.</div>
+			</li>
+		</ul>
+	</fieldset>
+	<p style="text-align:center">
+		<button type="submit" id="start" class="btn">Registrar usuario</button>
+	</p>
+</form>
+</body>
+</html>
