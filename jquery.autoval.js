@@ -113,8 +113,10 @@
 						}
 
 						// Habilitar el botón de envío si el formulario tiene todos los campos validados
-						if ( options.disableSubmitBtn && methods.isAllValid.apply(this) )
-							$('button[type=submit]', this).removeAttr('disabled');
+						if ( options.disableSubmitBtn && methods.isAllValid.apply($(this).parent().parent()) ) {
+							console.log($('button[type=submit]', $(this).parent().parent()).attr('disabled'));
+							$('button[type=submit]', $(this).parent().parent()).removeAttr('disabled');
+						}
 					}
 				});
 			});
@@ -171,7 +173,7 @@
 			// Verificar si se debe validar a nivel servidor el campo
 			if ( $(field).attr('data-validationurl') != undefined && !options.skipAJAXVal ) {
 				$(field).parent().find('.feedback').attr('data-icon', 'wait');
-				var urlstr = $(field).attr('data-validationurl').substring(0, $(field).attr('data-validationurl').lastIndexOf('?'));
+				var urlstr = $(field).attr('data-validationurl').substring(0, $(field).attr('data-validationurl').lastIndexOf('?')).replace('%VAL', $(field).val());
 				var datastr = $(field).attr('data-validationurl').substring($(field).attr('data-validationurl').lastIndexOf('?') + 1).replace('%VAL%', $(field).val());
 				console.log('AUTOVAL: Validando campo de acuerdo a la respuesta de la URL "data-validationurl": { URL: ' + urlstr + ', Datos: ' + datastr + ' }');
 
@@ -211,14 +213,15 @@
 
 		isAllValid: function() {
 			// Verificar que todos los campos hayan sido validados de manera adecuada
-			var isValid; var items = $(sel + ', :password', this);
-			for ( var i; i < items.size(); i++ ) {
-				isValid = (!isValid) ? false : items[i].parent().find('.feedback[data-icon=ok]').size();
+			if ( $(this).find('.feedback').length === $(this).find('.feedback[data-icon=ok]').length ) {
+				console.log('AUTOVAL: ¿Han sido todos los campos validados? SÍ.');
+				return true;
 			}
-			console.log('AUTOVAL: ¿Han sido todos los campos validados?' + (isValid ? ' SÍ.' : ' NO'));
-			return isValid;
+			else {
+				console.log('AUTOVAL: ¿Han sido todos los campos validados? NO.');
+				return false;
+			}
 		}
-
 	};
 
 
