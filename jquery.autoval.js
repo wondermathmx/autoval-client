@@ -1,6 +1,6 @@
 /*
 	jquery.autoval.js
-	Versión 0.1.26062012
+	Versión 0.1
 	Plugin jQuery que permite la validación automática de los parámetros especificados en el formulario.
 	
 	(C) 2012, WonderMath:
@@ -9,7 +9,7 @@
 
 (function( $ ) {
 
-	var sel = 'input[type=text], input[type=search], input[type=url], input[type=tel], input[type=email], textarea';
+	var sel = 'input:text, input[type=search], input[type=url], input[tel], input[email], textarea';
 
 	// Configuraciones predefinidas del plugin
 	var defaults = {
@@ -32,33 +32,34 @@
 			// Crear y llenar una variable que nos indique si hay soporte 
 			$.support.placeholder = false;
 			var p = document.createElement('input');
-			if ('placeholder' in p) {
+			if ('placeholder' in p)
 				$.support.placeholder = true;
-				console.log('AUTOVAL: Soporte de "placeholder" ' + ($.support.placeholder ? 'activado' : 'desactivado') + '.');
-			}
+			console.log('AUTOVAL: Soporte de "placeholder" ' + ($.support.placeholder ? '' : 'des') + 'activado.');
 
 			options = $.extend(defaults, options);
 			console.log('Método init llamado con los parámetros:');
 			console.log(options);
 
+
+			//
+			// Código para simular el atributo placeholder en navegadores que no lo soporten
+			//
 			if ( options.remarkPlaceholder && !$.support.placeholder ) {
 				$(this).find('li').each(function() {
-					// Escribir el texto de la etiqueta "placeholder"
-					// para cada uno de los campos de texto
+
+					// Escribir el texto de la etiqueta "placeholder" para cada uno de los campos de texto
 					$(sel).each(function() {
 						$(this).css('color', options.pseudoHolderColor).val($(this).attr('placeholder'));
 						$(this).attr('title', $(this).attr('palceholder'));
 					});
 
-					// Convertir los campos tipo "contraseña" en "texto"
-					// para mostrar la etiqueta "placeholder"
+					// Convertir los campos tipo contraseña en texto para mostrar la etiqueta "placeholder"
 					$(':password').each(function() {
 						if ($(this).val() == '')
 							$(this).addClass('waspassword').prop('type', 'text').css('color', options.pseudoHolderColor).val($(this).attr('placeholder'));
 					});
 
-					// Añadir a cada campo de cada formulario código para
-					// mostrar el texto de la etiqueta "placeholder"
+					// Añadir a cada campo de cada formulario código para mostrar/ocultar el texto de la etiqueta "placeholder"
 					$(sel).on('focus', function() {
 						if ($(this).val() == $(this).attr('placeholder')) {
 							$(this).val('').css('color', options.defaultTextColor);
@@ -80,60 +81,80 @@
 				});
 			}
 
-			// Añadir para cada elemento la imagen de 
-			// retoralimentación para el usuario
+			//
+			// Añadir para cada elemento la imagen de retroalimentación para el usuario
+			//
 			$(this).find('li').each(function() {
 				if (! ($('.feedback', this).length === 1))
 					$(this).append('<div class="feedback"></div>');
 				$('.feedback', this).attr('data-icon', 'info');
 			});
 
-			// PENDIENTE Añadir los eventos correspondientes a la
-			// imagen de retroalimentación al usuario
+			//
+			// PENDIENTE Añadir los eventos correspondientes a la imagen de retroalimentación al usuario
+			//
 
-			// PENDIENTE Crear eventos para la validación de cada
-			// uno de los campos de texto al ser necesario
+			//
+			// Crear eventos para la validación de cada uno de los campos de texto al ser necesario
+			//
 			$(this).find('li').each(function() {
 				$(sel + ', :password', this).on('blur', function() {
 					console.log('AUTOVAL: Valor de campo -> "' + $(this).val() + '"');
-					if ( $(this).val() != '' || (!$.support.placeholder && $(this).val() != $(this).attr('placeholder')) ) {
-						console.log('AUTOVAL: Proceso de validación iniciado.');
-						var result = methods.validate.apply(this, [this, options]);
 
-						if ( result === 1 ) {
-							$(this).parent().find('.feedback').attr('data-icon', 'ok');
-							if ( options.enablingOnSequence && options.skipAJAXVal ) {
-								console.log('AUTOVAL: Activando siguiente campo.');
-								$(this).parent().next().find(sel + ', :password').removeAttr('disabled');
+					if ( $(this).val() != '' ) {
+						if ( $.support.placeholder || (!$.support.placeholder && $(this).val() != $(this).attr('placeholder')) ) {
+							console.log('AUTOVAL: Proceso de validación iniciado.');
+							var result = methods.validate.apply(this, [this, options]);
+
+							if ( result === 1 ) {
+								$(this).parent().find('.feedback').attr('data-icon', 'ok');
+								if ( options.enablingOnSequence && options.skipAJAXVal ) {
+									console.log('AUTOVAL: Activando siguiente campo.');
+									$(this).parent().next().find(sel + ', :password').removeAttr('disabled');
+								}
 							}
-						}
-						else if ( result === 0 ) {
-							console.log('AUTOVAL: Error de validación en el campo ' + $(this).index() + ' del formulario.');
-							$(this).parent().find('.feedback').attr('data-icon', 'warn');
-						}
+							else if ( result === 0 ) {
+								console.log('AUTOVAL: Error de validación en el campo ' + $(this).index() + ' del formulario.');
+								$(this).parent().find('.feedback').attr('data-icon', 'warn');
+							}
 
-						// Habilitar el botón de envío si el formulario tiene todos los campos validados
-						if ( options.disableSubmitBtn && methods.isAllValid.apply($(this).parent().parent()) ) {
-							console.log($('button[type=submit]', $(this).parent().parent()).attr('disabled'));
-							$('button[type=submit]', $(this).parent().parent()).removeAttr('disabled');
+							// Verificar que todos los campos hayan sido validados de manera adecuada
+							if ( $(this).parent().parent().find('.feedback').length === $(this).parent().parent().find('.feedback[data-icon=ok]').length ) {
+								console.log('AUTOVAL: ¿Han sido todos los campos validados? SÍ.');
+								if ( options.disableSubmitBtn )
+									// Habilitar el botón de envío en caso necesario
+									$(this).parent().parent().find('input, button').filter('[type=submit]').removeAttr('disabled');
+							}
+							else 
+								console.log('AUTOVAL: ¿Han sido todos los campos validados? NO.');
 						}
 					}
+						
 				});
 			});
 
+			//
+			// Deshabilitar los componentes subsecuentes si la habilitación en secuencia está activada
+			//
+			if ( options.enablingOnSequence )
+				$('li', this).find(sel + ', :password').attr('disabled', '').filter(':first').removeAttr('disabled');
 
-			// Deshabilitar los componentes subsecuentes si
-			// la habilitación en secuencia está activada
-			if ( options.enablingOnSequence ) {
-				$('li ' + sel + ', li :password', this).attr('disabled', '');
-				$('li ' + sel + ', li :password', this).filter(':first').removeAttr('disabled');
-			}
-
+			//
 			// Deshabilitar el botón de envío del formulario de ser necesario
+			//
 			if ( options.disableSubmitBtn ) {
-				$('button[type=submit]', this).attr('disabled', '');
+				$('input, button', this).filter('[type=submit]').attr('disabled', '');
 			}
 
+			//
+			// PENDIENTE Impedir el envío de un formulario si no se han validado todos los datos
+			//
+			this.submit(function(e) {
+				if ( !methods.isAllValid.apply(this) )
+					e.preventDefault();
+			});
+
+			// Retornar un objeto jQuery para mantener encadenabilidad
 			return this.each(function() {});
 		},
 
@@ -211,16 +232,16 @@
 				return 1;
 		},
 
-		isAllValid: function() {
+		isAllValid: function(options) {
 			// Verificar que todos los campos hayan sido validados de manera adecuada
 			if ( $(this).find('.feedback').length === $(this).find('.feedback[data-icon=ok]').length ) {
 				console.log('AUTOVAL: ¿Han sido todos los campos validados? SÍ.');
-				return true;
+				if ( options.disableSubmitBtn )
+					// Habilitar el botón de envío en caso necesario
+					$(this).find('input, button').filter('[type=submit]').removeAttr('disabled');
 			}
-			else {
+			else 
 				console.log('AUTOVAL: ¿Han sido todos los campos validados? NO.');
-				return false;
-			}
 		}
 	};
 
